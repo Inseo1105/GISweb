@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MUSEUM SEARCH</title>
+    <script src="https://kit.fontawesome.com/c0ed402f99.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcCVa1BBGZDamToAUr7UIotPH9E1OsAWQ&v=beta&libraries=marker&callback=initMap"></script>
+</head>
+
+<body>
+    <div class="top">
+		<h1> Museum </h1>
+			<p>전주에 있는 박물관 관련 지도 사이트 입니다.</p>
+            <HR size="2" width="900" color="black" aligne="center">
+		</div>
+
+        <div class = "sch">
+            <a href="/"> 홈 </a>
+            <a href="/search"> 검색 </a>
+            <a href="/mysite">현재위치</a>
+            <a href="/ways">직선거리</a>        
+        </div>
+
+        <form method="GET" class="search">
+            <input placeholder="검색어를 입력하세요" name="keyword" type="search">
+            <button type="submit" class="fa-solid fa-magnifying-glass fa-lg"></button>
+        </form>
+
+        
+        <p class="mm" id="mm" name="mm">
+            <% for(var i=0; i<museums.length; i++){ %>
+            <%= museums[i].name %> (
+            <%= museums[i].position.lat %> , 
+            <%= museums[i].position.lng %> )  
+            <br/>
+            <% } %>
+        
+        </p>
+        
+        
+        <div id="map"></div>
+
+    <script type="text/javascript">
+
+        let marker;
+        function initMap() {
+            const center = { //위도, 경도
+                lat : 35.8198,
+                lng : 127.1117
+            };
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 13,
+                center,
+                mapId: "6d3a5ee9f0c7f908",
+            });
+
+            for (const museumd of properties) {
+                const advancedMarkerView = new google.maps.marker.AdvancedMarkerView({
+                    map,
+                    content: buildContent(museumd),
+                    position: museumd.position,
+                    title: museumd.description,
+                });
+                const element = advancedMarkerView.element;
+
+                ["focus", "pointerenter"].forEach((event) => {
+                    element.addEventListener(event, () => {
+                        highlight(advancedMarkerView, museumd);
+                    });
+                });
+                ["blur", "pointerleave"].forEach((event) => {
+                    element.addEventListener(event, () => {
+                        unhighlight(advancedMarkerView, museumd);
+                    });
+                });
+                advancedMarkerView.addListener("click", (event) => {
+                    unhighlight(advancedMarkerView, museumd);
+                });
+            }
+        }
+
+        function highlight(markerView, museumd) {
+            markerView.content.classList.add("highlight");
+            markerView.element.style.zIndex = 1;
+        }
+
+        function unhighlight(markerView, museumd) {
+            markerView.content.classList.remove("highlight");
+            markerView.element.style.zIndex = "";
+        }
+
+        function buildContent(museumd) {
+            const content = document.createElement("div");
+
+            content.classList.add("museumd");
+            content.innerHTML = `
+            <div class="icon tp-${museumd.type}">
+                <i aria-hidden="true" class="fa-solid fa-${museumd.icon}" title="museumd"></i>
+                <span class="fa-sr-only">박물관</span>
+            </div>
+            <div class="details">
+                <div class="name">${museumd.name}</div>
+                <div class="address">${museumd.address}</div>
+                <div class="features">
+                <div>
+                    <i aria-hidden="true" class="fa-solid fa-won-sign" title="price"></i>
+                    <span class="fa-sr-only">입장료: </span>
+                    <span>${museumd.price}</span>
+                </div>
+                <div>
+                    <i aria-hidden="true" class="fa-solid fa-phone" title="number"></i>
+                    <span class="fa-sr-only">전화번호</span>
+                    <span>${museumd.number}</span>
+                </div>
+                <div>
+                    <i aria-hidden="true" class="fa-regular fa-clock" title="hours"></i>
+                    <span class="fa-sr-only">운영시간 </span>
+                    <span>${museumd.hours}</span>
+                </div>
+                </div>
+            </div>
+            `;
+            return content;
+    }
+    const properties = [
+    {
+        name: '국립전주박물관',
+        address: '전북 전주시 완산구 쑥고개로 249',
+        price: '무료',
+        number: '063-233-5651',
+        hours: '매일, 10:00-18:00',
+        type: 'history',
+        icon: 'landmark',
+        position: { lat: 35.8013, lng: 127.0897 }
+    },
+    ];
+
+    //properties = window.mmm;
+
+    initMap();  
+
+    </script>
+
+</body>
+
+</html>

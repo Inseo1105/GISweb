@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MUSEUM WAYS</title>
+    <script src="https://kit.fontawesome.com/c0ed402f99.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcCVa1BBGZDamToAUr7UIotPH9E1OsAWQ&v=beta&libraries=marker&callback=initMap"></script>
+</head>
+
+<body>
+    <div class="top">
+        <h1> Museum </h1>
+        <p>전주에 있는 박물관 관련 지도 사이트 입니다.</p>
+            <HR size="2" width="900" color="black" aligne="center">
+    </div>
+
+    <div class = "sch">
+        <a href="/"> 홈 </a>
+        <a href="/search"> 검색 </a>
+        <a href="/mysite">현재위치</a>
+        <a href="/ways">직선거리</a>
+    </div>
+
+    <div class = "re">
+        <input type="radio" name="cb" id="ck1" onclick="initMap()" checked><label for="ck1">국립전주박물관 </label></input>
+        <input type="radio" name="cb" id="ck2" onclick="initMap()"><label for="ck2">전주콩나물박물관 </label></input>
+        <input type="radio" name="cb" id="ck3" onclick="initMap()"><label for="ck3">전주한지박물관 </label></input>
+    </div>
+
+    <div class="data" id="floating-panel">
+        <p>A <input type="text" readonly id="origin" /> B 
+        <input type="text" readonly id="destination" /><br />
+        거리: <input type="text" readonly id="heading" class="left"/> km</p>
+    </div>
+
+    <div id="map"></div>
+   
+  
+
+    <script type="text/javascript">
+    let marker1, marker2;
+    let poly, geodesicPoly;
+    var mu1, mu2;
+
+
+    function initMap() {
+        if(document.getElementById('ck1').checked){
+            mu1 = {lat: 35.8013, lng: 127.0897};
+            mu2 = {lat: 35.8248, lng: 127.1476};
+        }
+        else if(document.getElementById('ck2').checked){
+            mu1 = {lat: 35.8198, lng: 127.1171};
+            mu2 = {lat: 35.8248, lng: 127.1476};
+        }
+        else if(document.getElementById('ck3').checked){
+            mu1 = {lat: 35.849, lng: 127.1002};
+            mu2 = {lat: 35.8248, lng: 127.1476};
+        }
+        else{
+            mu1 = {lat: 35.8248, lng: 127.1476};
+            mu2 = {lat: 35.8248, lng: 127.1476};
+        }
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 12,
+        center: { lat: 35.8248, lng: 127.1476 },
+    });
+
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+        document.getElementById("info")
+    );
+
+    marker1 = new google.maps.Marker({
+        map,
+        draggable: true,
+        position: mu1,
+        title: "Hello World!",
+    });
+
+    marker2 = new google.maps.Marker({
+        map,
+        draggable: true,
+        position: mu2,
+    });
+
+    const bounds = new google.maps.LatLngBounds(
+        marker1.getPosition(),
+        marker2.getPosition()
+    );
+
+    map.fitBounds(bounds);
+    google.maps.event.addListener(marker1, "position_changed", update);
+    google.maps.event.addListener(marker2, "position_changed", update);
+    poly = new google.maps.Polyline({
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 3,
+        map: map,
+    });
+    geodesicPoly = new google.maps.Polyline({
+        strokeColor: "#CC0099",
+        strokeOpacity: 1.0,
+        strokeWeight: 3,
+        geodesic: true,
+        map: map,
+    });
+    update();
+    }
+
+    function update() {
+    const path = [marker1.getPosition(), marker2.getPosition()];
+
+    poly.setPath(path);
+    geodesicPoly.setPath(path);
+
+    const heading = google.maps.geometry.spherical.computeDistanceBetween(
+        path[0],
+        path[1]
+    );
+
+    document.getElementById("heading").value = String(heading/1000);
+    document.getElementById("origin").value = String(path[0]);
+    document.getElementById("destination").value = String(path[1]);
+    }
+
+    initMap();
+
+
+    </script>
+
+</body>
+
+</html>

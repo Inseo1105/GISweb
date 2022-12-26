@@ -7,7 +7,7 @@ const museumSchema = new mongoose.Schema({
     number: {type: String},
     hours: {type: String},
     type: {type: String},
-    icon: {sypte: String},
+    icon: {type: String},
     position:{
         lat:{type:Number},
         lng:{type:Number},

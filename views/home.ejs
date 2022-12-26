@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MUSEUM HOME</title>
+    <script src="https://kit.fontawesome.com/c0ed402f99.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcCVa1BBGZDamToAUr7UIotPH9E1OsAWQ&v=beta&libraries=marker&callback=initMap"></script>
+</head>
+
+<body>
+    <div class="top">
+        <h1> Museum </h1>
+        <p>전주에 있는 박물관 관련 지도 사이트 입니다.</p>
+            <HR size="2" width="900" color="black" aligne="center">
+    </div>
+
+    <div class = "sch">
+        <a href="/"> 홈 </a>
+        <a href="/search"> 검색 </a>
+        <a href="/mysite">현재위치</a>
+        <a href="/ways">직선거리</a>
+    </div>
+
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        function initMap() {
+            const center = { //위도, 경도
+                lat : 35.8198,
+                lng : 127.1117
+            };
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 13,
+                center,
+                mapId: "6d3a5ee9f0c7f908",
+            });
+
+            for (const museumd of properties) {
+                const advancedMarkerView = new google.maps.marker.AdvancedMarkerView({
+                    map,
+                    content: buildContent(museumd),
+                    position: museumd.position,
+                    title: museumd.description,
+                });
+                const element = advancedMarkerView.element;
+
+                ["focus", "pointerenter"].forEach((event) => {
+                    element.addEventListener(event, () => {
+                        highlight(advancedMarkerView, museumd);
+                    });
+                });
+                ["blur", "pointerleave"].forEach((event) => {
+                    element.addEventListener(event, () => {
+                        unhighlight(advancedMarkerView, museumd);
+                    });
+                });
+                advancedMarkerView.addListener("click", (event) => {
+                    unhighlight(advancedMarkerView, museumd);
+                });
+            }
+        }
+
+        function highlight(markerView, museumd) {
+            markerView.content.classList.add("highlight");
+            markerView.element.style.zIndex = 1;
+        }
+
+        function unhighlight(markerView, museumd) {
+            markerView.content.classList.remove("highlight");
+            markerView.element.style.zIndex = "";
+        }
+
+        function buildContent(museumd) {
+            const content = document.createElement("div");
+
+            content.classList.add("museumd");
+            content.innerHTML = `
+    <div class="icon tp-${museumd.type}">
+        <i aria-hidden="true" class="fa-solid fa-${museumd.icon}" title="museumd"></i>
+        <span class="fa-sr-only">박물관</span>
+    </div>
+    <div class="details">
+        <div class="name">${museumd.name}</div>
+        <div class="address">${museumd.address}</div>
+        <div class="features">
+        <div>
+            <i aria-hidden="true" class="fa-solid fa-won-sign" title="price"></i>
+            <span class="fa-sr-only">입장료: </span>
+            <span>${museumd.price}</span>
+        </div>
+        <div>
+            <i aria-hidden="true" class="fa-solid fa-phone" title="number"></i>
+            <span class="fa-sr-only">전화번호</span>
+            <span>${museumd.number}</span>
+        </div>
+        <div>
+            <i aria-hidden="true" class="fa-regular fa-clock" title="hours"></i>
+            <span class="fa-sr-only">운영시간 </span>
+            <span>${museumd.hours}</span>
+        </div>
+        </div>
+    </div>
+    `;
+            return content;
+ }
+ const properties = [
+ {
+    name: '국립전주박물관',
+    address: '전북 전주시 완산구 쑥고개로 249',
+    price: '무료',
+    number: '063-233-5651',
+    hours: '매일, 10:00-18:00',
+    type: 'history',
+    icon: 'landmark',
+    position: { lat: 35.8013, lng: 127.0897 }
+  },
+  {
+    name: '전주전통술박물관',
+    address: '전북 전주시 완산구 한지길 74',
+    price: '무료',
+    number: '063-287-6305',
+    hours: '화-일, 9:00-18:00',
+    type: 'food',
+    icon: 'wine-glass',
+    position: { lat: 35.817, lng: 127.1535 }
+  },
+  {
+    name: '전주역사박물관',
+    address: '전북 전주시 완산구 쑥고개로 259',
+    price: '무료',
+    number: '063-228-6485',
+    hours: '화-일, 9:00-18:00',
+    type: 'history',
+    icon: 'landmark',
+    position: { lat: 35.8012, lng: 127.0933 }
+  },
+  {
+    name: '루이엘모자박물관',
+    address: '전북 전주시 완산구 전동성당길 8 중부대성학원',
+    price: '3,000원',
+    number: '063-287-6305',
+    hours: '화-일, 10:00-18:00',
+    type: 'other',
+    icon: 'hat-cowboy-side',
+    position: { lat: 35.8185, lng: 127.1484 }
+  },
+  {
+    name: '전주자연생태박물관',
+    address: '전북 전주시 완산구 바람쐬는길 21',
+    price: '2,000원',
+    number: '063-288-9540',
+    hours: '화-일, 9:00-18:00',
+    type: 'nature',
+    icon: 'leaf',
+    position: { lat: 35.8116, lng: 127.1625 }
+  },
+  {
+    name: '부채박물관',
+    address: '전북 전주시 완산구 천경로 37 2층',
+    price: '1,000원',
+    number: '063-231-8527',
+    hours: '화-일, 10:00-18:00',
+    type: 'other',
+    icon: 'fan',
+    position: { lat: 35.8098, lng: 127.1531 }
+  },
+  {
+    name: '전주한지박물관',
+    address: '전북 전주시 덕진구 팔복로 59 (주)전주페이퍼',
+    price: '무료',
+    number: '063-210-8103',
+    hours: '화-토, 9:00-17:00',
+    type: 'other',
+    icon: 'scroll',
+    position: { lat: 35.849, lng: 127.1002 }
+  },
+  {
+    name: '전주난장',
+    address: '전북 전주시 완산구 동문길 33-20',
+    price: '7,500원',
+    number: '0507-1440-0120',
+    hours: '매일, 10:00-19:00',
+    type: 'other',
+    icon: 'train',
+    position: { lat: 35.8188, lng: 127.1522 }
+  },
+  {
+    name: '추억박물관',
+    address: '전북 전주시 완산구 전동성당길 8',
+    price: '3,000원',
+    number: '010-5131-3206',
+    hours: '매일, 10:00-19:00',
+    type: 'other',
+    icon: 'memory',
+    position: { lat: 35.8185, lng: 127.1485 }
+  },
+  {
+    name: '전북대학교 박물관',
+    address: '전북 전주시 덕진구 백제대로 567',
+    price: '무료',
+    number: '063-270-3488',
+    hours: '매일, 9:30-17:30',
+    type: 'history',
+    icon: 'building-columns',
+    position: { lat: 35.846, lng: 127.1276 }
+  },
+  {
+    name: '예수병원 의학박물관',
+    address: '전북 전주시 완산구 서원로 394 예수병원 3주차장건물 1층',
+    price: '무료',
+    number: '063-230-8778',
+    hours: '화-일, 9:00-17:00',
+    type: 'history',
+    icon: 'hospital',
+    position: { lat: 35.8148, lng: 127.1367 }
+  },
+  {
+    name: '어진박물관',
+    address: '전북 전주시 완산구 태조로 44 경기전 경내',
+    price: '무료',
+    number: '063-231-0090',
+    hours: '매일, 9:00-18:00',
+    type: 'history',
+    icon: 'landmark',
+    position: { lat: 35.8164, lng: 127.1494 }
+  },
+  {
+    name: '전주콩나물박물관',
+    address: '전북 전주시 완산구 화산천변2길 7-4 현대옥 전주본점 2층',
+    price: '무료',
+    number: '063-228-0020',
+    hours: '매일, 8:00-20:00',
+    type: 'food',
+    icon: 'utensils',
+    position: { lat: 35.8198, lng: 127.1171 }
+  },
+  {
+    name: '호남기독교박물관',
+    address: '전북 전주시 완산구 효자동 3가 1080-1',
+    price: '무료',
+    number: '0507-1326-3117',
+    hours: '일-금, 9:00-17:00',
+    type: 'other',
+    icon: 'book-bible',
+    position: { lat: 35.8161, lng: 127.0899 }
+  },
+  {
+    name: '전주곤충캠퍼스',
+    address: '전북 전주시 완산구 풍남문 4길 24',
+    price: '8,000원',
+    number: '063-283-3747',
+    hours: '화-토, 14:00-18:00',
+    type: 'nature',
+    icon: 'bug',
+    position: { lat: 35.8144, lng: 127.1455 }
+  },
+  {
+    name: '전주한옥마을선비문화관',
+    address: '전북 전주시 완산구 한지길 102',
+    price: '무료',
+    number: '063-288-5124',
+    hours: '화-일, 10:00-18:00',
+    type: 'other',
+    icon: 'place-of-worship',
+    position: { lat: 35.8158, lng: 127.1538 }
+  }
+
+
+
+];
+
+        initMap(); // 선언즉시 맵 생성
+
+    </script>
+
+</body>
+
+</html>
